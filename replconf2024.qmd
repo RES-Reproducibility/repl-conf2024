@@ -1,0 +1,153 @@
+---
+title: RES Replicator Conference 2024
+# title-slide-attributes:
+#   data-background-image: img/RES-logo_WHITE copy.png
+#   data-background-size: 15%
+#   data-background-position: 60% 52%
+format: 
+  revealjs:
+    theme: _extensions/grantmcdermott/clean/clean.scss
+    chalkboard: false
+    logo: img/RES-logo_WHITE.png
+    footer: "[RES Replicator Conference 2024](https://RES-reproducibility.github.io/replconf2024/)"
+    incremental: false
+    code-line-numbers: false
+    highlight-style: github
+    slide-number: true
+author: 
+  - name: Florian Oswald
+    orcid: 0000-0001-7737-2038
+    email: florian.oswald@sciencespo.fr
+    affiliations: SciencesPo Paris, RES Data Editor
+subtitle: "[First *ever* RES Replicator Conference ✌️](https://RES-reproducibility.github.io/replconf2024/)"
+date: last-modified
+date-format: "D MMMM, YYYY"
+---
+
+## Agenda
+
+
+1. How to write a report? News on the `README`.
+2. How to deal with confidential data?
+3. `STATA` versioning issues.
+4. `R` versioning issues.
+5. `nuvolos` rules.
+6. `docker` workflow.
+7. Collecting tips and tricks.
+
+::: {.fragment}
+
+
+8. 🍻 🥳 🍾
+
+:::
+
+## How to write a Report?
+
+* New guidelines on [EJ workflow](https://res-reproducibility.github.io/EJ-Workflow/#step-4.-replicators) as well as on [template repo](https://github.com/RES-Reproducibility/EJ-report-template)
+* `README` now must have a _statement about rights_.
+
+![](img/rights.png)
+
+
+## How to deal with Confidential Data?
+
+::: {.callout-note}
+
+# Lookout for keywords 🧐
+
+What the replicator should pick up on immediately: the words _confidential_, _restricted access_, _not available_ etc.
+
+:::
+
+**Layered Approach if Data Cannot be Shared:**
+
+::: {.incremental}
+1. If we have instructions for direct access, we try (time limit: 30 mins)
+2. If not, try to get access to authors/data provider's machine (i.e. their _screen_)
+3. If not, data provider may certify results for us.
+4. If not, must provide simulated version of data.
+:::
+
+## `STATA` Versioning Issues
+
+1. Must be reproducible _with version of author_.
+2. Complicated relationship between `STATA` version and package versions.
+3. Best practice: [Julian Reif's Guidelines]([insert link here](https://julianreif.com/guide/#libraries))
+4. Case Study on [blog post](https://ejdataeditor.github.io/posts/20240505-stataversions/)
+  
+## `R` Versioning Issues
+
+1. Where are `R` packages installed?
+2. Does copying compiled package of author into your `.libPaths()` work?
+3. Why is `R` more complicated than `STATA` here?
+4. We require full list (with versions) of all `R` packages. How can you guarantee this environment on your system? [`renv`](https://rstudio.github.io/renv/articles/renv.html)
+
+
+## `nuvolos` Rules
+
+
+::: {.incremental}
+1. You are allowed to create new instances. However,
+2. You **must invite me** onto this instance! I need to be able to look at all instances.
+3. Configure all your apps to start in _shared mode_.
+4. Be careful with storage. Your instance has only 50GB. We can attach a large file storage system on demand.
+:::
+
+## `docker` workflow
+
+::: {.incremental}
+
+1. What is [`docker link`](https://www.docker.com)?
+2. What do you do if results require `STATA 15`? 👉 [docker stata 15](https://github.com/AEADataEditor/docker-stata)
+3. What do you do if results require `INTEL fortran 2023 compiler, MKL, Mosek 1.2, Gurobi 3.4, R 3.2, STATA 16 MP, python 3.9` ? ☠️ 
+4. 👉 [docker container here](https://github.com/AEADataEditor/docker-aer-2023-0700)
+5. I am trying to move all operations there. tbc.
+:::
+
+## Run `STATA` in a `docker` 
+
+1. start docker
+2. execute this script
+
+```bash
+# save this in a file: mydocker.sh
+# define some variables First
+TAG=2023-06-13
+VERSION=16
+MYHUBID=dataeditors
+MYIMG=stata$VERSION
+STATALIC="$(find $HOME/Dropbox/licenses -name stata.lic | tail -1)"
+echo "using license at $STATALIC"
+echo "STATA version $VERSION, docker IMG tag $TAG"
+
+
+docker run -it --rm \
+  -v "$STATALIC":/usr/local/stata/stata.lic \
+  --name="dock_stata$VERSION" \
+  --mount type=bind,source="$(pwd)",target=/project \
+  $MYHUBID/$MYIMG:$TAG
+
+# run by saying ./mydocker.sh on your command line
+```
+
+## Collecting and Documenting Tips and Tricks
+
+* replicator resources on website
+* wiki on EJ-Workflow
+
+## Resources
+
+Here are a few other resources which might be helpful:
+
+* [Workshop Material on Reproducibility at CEPII 2023](https://res-reproducibility.github.io/hitchhiker/)
+* Hidden page on DE website: [Replicator Resources](https://ejdataeditor.github.io/replicator-resources)
+* AEA data editor [github org](https://github.com/AEADataEditor/)
+* ES resources?
+
+# Questions? {background-color="#40666e"}
+
+
+
+
+# End 🍻 {background-color="#40666e"}
